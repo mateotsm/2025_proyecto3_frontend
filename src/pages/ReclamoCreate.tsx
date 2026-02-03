@@ -1,42 +1,70 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { crearReclamo } from '../services/reclamo.service';
+import  { getPrioridades } from '../services/prioridad.service'
+import type { BaseEntity } from '../types/common';
 
 export function ReclamoCreate() {
   const [descripcion, setDescripcion] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const [prioridades, setPrioridades] = useState<BaseEntity[]>([]);
+  const [prioridadId, setPrioridadId] = useState('');
 
-    try {
-      await crearReclamo({
-        descripcion,
-        proyectoId: 'ID_DE_PROYECTO',
-        tipoReclamoId: 'ID_TIPO_RECLAMO',
-        prioridadId: 'ID_PRIORIDAD',
-        nivelCriticidadId: 'ID_NIVEL',
-        estadoId: 'ID_ESTADO',
-      });
-
-      alert('Reclamo creado');
-      setDescripcion('');
-    } catch (error: any) {
-      alert(error.message);
-    }
-  };
+  useEffect(() => {
+    getPrioridades()
+      .then(setPrioridades)
+      .catch(console.error);
+  }, []);
 
   return (
-    <form onSubmit={handleSubmit}>
+    <div>
       <h2>Crear Reclamo</h2>
 
+      {/* DESCRIPCIÓN */}
       <textarea
-        value={descripcion}
-        onChange={(e) => setDescripcion(e.target.value)}
         placeholder="Descripción"
-        required
+        value={descripcion}
+        onChange={e => setDescripcion(e.target.value)}
       />
 
-      <br />
-      <button type="submit">Guardar</button>
-    </form>
+      {/* SELECT PRIORIDAD */}
+      <select
+        value={prioridadId}
+        onChange={e => setPrioridadId(e.target.value)}
+      >
+        <option value="">Seleccione prioridad</option>
+        {prioridades.map(p => (
+          <option key={p._id} value={p._id}>
+            {p.nombre}
+          </option>
+        ))}
+      </select>
+
+      {/* BOTÓN GUARDAR */}
+      <button
+        onClick={async () => {
+          if (!descripcion || !prioridadId) {
+            alert('Complete todos los campos');
+            return;
+          }
+
+          try {
+            await crearReclamo({
+              descripcion,
+              prioridadId,
+              proyectoId: 'HARDCODE_TEMP',
+              tipoReclamoId: 'HARDCODE_TEMP',
+              nivelCriticidadId: 'HARDCODE_TEMP',
+              estadoId: 'HARDCODE_TEMP',
+            });
+
+            alert('Reclamo creado');
+          } catch (e: any) {
+            alert(e.message);
+          }
+        }}
+      >
+        Guardar
+      </button>
+    </div>
   );
 }
