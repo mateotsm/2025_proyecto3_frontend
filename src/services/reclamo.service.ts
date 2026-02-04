@@ -7,15 +7,41 @@ export interface Reclamo {
   prioridadId: string;
   nivelCriticidadId: string;
   estadoId: string;
+  areaId: string;
 }
 
-export async function crearReclamo(data: Reclamo) {
+export async function crearReclamo(
+  data: Reclamo,
+  archivos?: FileList | null,
+  imagenes?: FileList | null,
+) {
+  const formData = new FormData();
+
+  // DTO
+  formData.append('descripcion', data.descripcion);
+  formData.append('proyectoId', data.proyectoId);
+  formData.append('tipoReclamoId', data.tipoReclamoId);
+  formData.append('prioridadId', data.prioridadId);
+  formData.append('nivelCriticidadId', data.nivelCriticidadId);
+  formData.append('estadoId', data.estadoId);
+  formData.append('areaId', data.areaId);
+
+  // Archivos
+  if (archivos) {
+    Array.from(archivos).forEach((file) => {
+      formData.append('archivos', file);
+    });
+  }
+
+  if (imagenes) {
+    Array.from(imagenes).forEach((file) => {
+      formData.append('imagenes', file);
+    });
+  }
+
   const response = await fetch(`${API_BASE_URL}/reclamo`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
+    body: formData, // 👈 SIN headers
   });
 
   if (!response.ok) {
