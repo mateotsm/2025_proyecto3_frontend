@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { crearReclamo } from '../services/reclamo.service';
 import  { getPrioridades } from '../services/prioridad.service'
 import { getAreas } from '../services/area.service';
+import { getTiposReclamo } from '../services/tipoReclamo.service';
+import { getNivelesCriticidad } from '../services/nivelCriticidad.service';
 import type { BaseEntity } from '../types/common';
 
 export function ReclamoCreate() {
@@ -12,6 +14,10 @@ export function ReclamoCreate() {
   const [imagenes, setImagenes] = useState<FileList | null>(null);
   const [areaId, setAreaId] = useState('');
   const [areas, setAreas] = useState<BaseEntity[]>([]);
+  const [tiposReclamo, setTiposReclamo] = useState<BaseEntity[]>([]);
+  const [tipoReclamoId, setTipoReclamoId] = useState('');
+  const [nivelesCriticidad, setNivelesCriticidad] = useState<BaseEntity[]>([]);
+  const [nivelCriticidadId, setNivelCriticidadId] = useState('');
 
   useEffect(() => {
     getPrioridades()
@@ -21,6 +27,14 @@ export function ReclamoCreate() {
     getAreas()
       .then(setAreas)
       .catch(console.error);
+    
+    getTiposReclamo()
+      .then(setTiposReclamo)
+      .catch(console.error)
+    
+    getNivelesCriticidad()
+      .then(setNivelesCriticidad)
+      .catch(console.error)
   }, []);
 
   return (
@@ -60,6 +74,32 @@ export function ReclamoCreate() {
         ))}
       </select>
       
+      {/* SELECT TIPO RECLAMO */}
+      <select
+        value={tipoReclamoId}
+        onChange={e => setTipoReclamoId(e.target.value)}
+      >
+        <option value="">Seleccione tipo reclamo</option>
+        {tiposReclamo.map(tr => (
+          <option key={tr._id} value={tr._id}>
+            {tr.nombre}
+          </option>
+        ))}
+      </select>
+
+      {/* SELECT NIVEL CRITICIDAD */}
+      <select
+        value={nivelCriticidadId}
+        onChange={e => setNivelCriticidadId(e.target.value)}
+      >
+        <option value="">Seleccione criticidad</option>
+        {nivelesCriticidad.map(nc => (
+          <option key={nc._id} value={nc._id}>
+            {nc.nombre}
+          </option>
+        ))}
+      </select>
+
       {/* ARCHIVOS */}
       <input
         type="file"
@@ -78,7 +118,7 @@ export function ReclamoCreate() {
       {/* BOTÓN GUARDAR */}
       <button
         onClick={async () => {
-          if (!descripcion || !prioridadId || !areaId) {
+          if (!descripcion || !prioridadId || !areaId || !tipoReclamoId || !nivelCriticidadId) {
             alert('Complete todos los campos');
             return;
           }
@@ -89,9 +129,9 @@ export function ReclamoCreate() {
                 descripcion,
                 prioridadId,
                 areaId,
+                tipoReclamoId,
+                nivelCriticidadId,
                 proyectoId: 'HARDCODE_TEMP',
-                tipoReclamoId: 'HARDCODE_TEMP',
-                nivelCriticidadId: 'HARDCODE_TEMP',
                 estadoId: 'HARDCODE_TEMP',
               },
               archivos,
