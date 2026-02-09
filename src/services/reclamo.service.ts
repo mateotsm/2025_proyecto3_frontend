@@ -1,6 +1,15 @@
 import { API_BASE_URL } from '../config/api';
 
-export interface Reclamo {
+export interface CreateReclamoPayload { // Defino un grupo explicitamente para la reacin del reclamo en donde no incluyo el estadoId
+  descripcion: string;
+  prioridadId: string;
+  areaId: string;
+  tipoReclamoId: string;
+  nivelCriticidadId: string;
+  proyectoId: string;
+}
+
+export interface Reclamo { // Esta interfaz pasa a usarse en la funcion getReclamos()
   descripcion: string;
   proyectoId: string;
   tipoReclamoId: string;
@@ -11,7 +20,7 @@ export interface Reclamo {
 }
 
 export async function crearReclamo(
-  data: Reclamo,
+  data: CreateReclamoPayload,
   archivos?: FileList | null,
   imagenes?: FileList | null,
 ) {
@@ -23,7 +32,6 @@ export async function crearReclamo(
   formData.append('tipoReclamoId', data.tipoReclamoId);
   formData.append('prioridadId', data.prioridadId);
   formData.append('nivelCriticidadId', data.nivelCriticidadId);
-  formData.append('estadoId', data.estadoId);
   formData.append('areaId', data.areaId);
 
   // Archivos

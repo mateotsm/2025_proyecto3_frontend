@@ -4,6 +4,7 @@ import  { getPrioridades } from '../services/prioridad.service'
 import { getAreas } from '../services/area.service';
 import { getTiposReclamo } from '../services/tipoReclamo.service';
 import { getNivelesCriticidad } from '../services/nivelCriticidad.service';
+import { getProyectos } from '../services/proyecto.service';
 import type { BaseEntity } from '../types/common';
 
 export function ReclamoCreate() {
@@ -18,6 +19,8 @@ export function ReclamoCreate() {
   const [tipoReclamoId, setTipoReclamoId] = useState('');
   const [nivelesCriticidad, setNivelesCriticidad] = useState<BaseEntity[]>([]);
   const [nivelCriticidadId, setNivelCriticidadId] = useState('');
+  const [proyectos, setProyectos] = useState<BaseEntity[]>([]);
+  const [proyectoId, setProyectoId] = useState('');
 
   useEffect(() => {
     getPrioridades()
@@ -30,11 +33,15 @@ export function ReclamoCreate() {
     
     getTiposReclamo()
       .then(setTiposReclamo)
-      .catch(console.error)
+      .catch(console.error);
     
     getNivelesCriticidad()
       .then(setNivelesCriticidad)
-      .catch(console.error)
+      .catch(console.error);
+
+    getProyectos()
+      .then(setProyectos)
+      .catch(console.error);
   }, []);
 
   return (
@@ -100,6 +107,19 @@ export function ReclamoCreate() {
         ))}
       </select>
 
+      {/* SELECT PROYECTO */}
+      <select
+        value={proyectoId}
+        onChange={e => setProyectoId(e.target.value)}
+      >
+        <option value="">Seleccione proyecto</option>
+        {proyectos.map(p => (
+          <option key={p._id} value={p._id}>
+            {p.nombre}
+          </option>
+        ))}
+      </select>
+
       {/* ARCHIVOS */}
       <input
         type="file"
@@ -118,7 +138,13 @@ export function ReclamoCreate() {
       {/* BOTÓN GUARDAR */}
       <button
         onClick={async () => {
-          if (!descripcion || !prioridadId || !areaId || !tipoReclamoId || !nivelCriticidadId) {
+          if (!descripcion || 
+            !prioridadId || 
+            !areaId || 
+            !tipoReclamoId || 
+            !nivelCriticidadId || 
+            !proyectoId
+          ) {
             alert('Complete todos los campos');
             return;
           }
@@ -131,8 +157,7 @@ export function ReclamoCreate() {
                 areaId,
                 tipoReclamoId,
                 nivelCriticidadId,
-                proyectoId: 'HARDCODE_TEMP',
-                estadoId: 'HARDCODE_TEMP',
+                proyectoId,
               },
               archivos,
               imagenes,
