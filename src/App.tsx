@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import Login from './pages/Login';
 import { ReclamoCreate } from './pages/ReclamoCreate'
 import Dashboard from './pages/Dashboard'
 
@@ -7,6 +8,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Navigate to="/reclamos/nuevo" />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/reclamos/nuevo" element={<ReclamoCreate />} />
         <Route path="/dashboard" element={<Dashboard />} />
       </Routes>

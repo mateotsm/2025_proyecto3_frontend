@@ -1,4 +1,5 @@
 import { API_BASE_URL } from '../config/api';
+import { authFetch } from './authFetch';
 
 export interface CreateReclamoPayload { // Defino un grupo explicitamente para la reacin del reclamo en donde no incluyo el estadoId
   descripcion: string;
@@ -47,7 +48,7 @@ export async function crearReclamo(
     });
   }
 
-  const response = await fetch(`${API_BASE_URL}/reclamo`, {
+  const response = await authFetch(`${API_BASE_URL}/reclamo`, {
     method: 'POST',
     body: formData, // 👈 SIN headers
   });
@@ -61,7 +62,7 @@ export async function crearReclamo(
 }
 
 export async function getReclamos(): Promise<Reclamo[]> {
-  const response = await fetch(`${API_BASE_URL}/reclamo`);
+  const response = await authFetch(`${API_BASE_URL}/reclamo`);
 
   if (!response.ok) {
     const error = await response.text();
