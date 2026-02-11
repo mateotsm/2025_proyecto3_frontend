@@ -1,7 +1,10 @@
-export function authFetch(url: string, options: RequestInit = {}) {
+export async function authFetch(
+  url: string,
+  options: RequestInit = {},
+) {
   const token = localStorage.getItem('token');
 
-  return fetch(url, {
+  const res = await fetch(url, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -9,4 +12,12 @@ export function authFetch(url: string, options: RequestInit = {}) {
       ...options.headers,
     },
   });
+
+  if (res.status === 401) {
+    localStorage.removeItem('token');
+    window.location.href = '/login';
+    throw new Error('Sesión expirada');
+  }
+
+  return res;
 }
