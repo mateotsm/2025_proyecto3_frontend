@@ -4,11 +4,13 @@ export async function authFetch(
 ) {
   const token = localStorage.getItem('token');
 
+  const isFormData = options.body instanceof FormData;
+
   const res = await fetch(url, {
     ...options,
     headers: {
-      'Content-Type': 'application/json',
       ...(token && { Authorization: `Bearer ${token}` }),
+      ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
       ...options.headers,
     },
   });
